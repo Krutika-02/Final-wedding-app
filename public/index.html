@@ -3,25 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wedding AI Assistant</title>
+    <title>Wedding Invitation</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>The wedding of <pre>Ganesh & Ghanashree</pre></h1>
-    <h3>Be Part of Our Big Day! ❤️</h3>
-    <h4>Wedding AI Assistant 🎙️</h4>
-    <p>Your Voice, Our Story!</p>
 
-    <div class="container">
-        <button id="startSpeech"><i class="fas fa-microphone"></i> Speak</button>
-        <p id="userText">You: <span></span></p>
-        <p id="aiResponse">🤖 <span></span></p>
-    </div>
+    <!-- Hero Section -->
+    <header class="hero">
+        <h2>The Wedding of</h2>
+        <h1><span>Ganesh</span> & <span>Ghanashree</span></h1>
+        <p>February 23rd 2025</p>
+    </header>
 
-    <footer>
-        <p>Made with ❤️ for Ganesh & Ghanashree’s Wedding | 2025</p>
-    </footer>
+    <!-- Wedding AI Assistant Section -->
+    <section class="wedding-ai">
+        <div class="text-content">
+            <h3>Be Part of Our Big Day! <span>❤️</span></h3>
+            <h4>Wedding AI Assistant</h4>
+            <p>Your Voice, Our Story!</p>
+            <div class="container">
+                <button id="startSpeech"><i class="fas fa-microphone"></i> Our Story</button>
+                <p id="userText"><span></span></p>
+                <p id="aiResponse"> <span></span></p>
+            </div>
+        </div>
 
+        <div class="video-preview">
+            <img src="assets/pic1.png" alt="Wedding Video">
+            <div class="play-button">▶</div>
+        </div>
+    </section>
+
+    <!-- Meet The Happy Couple -->
+    <section class="couple">
+        <h2>Meet The Happy Couple</h2>
+        <p>Together, we've found our forever—join us as we celebrate this beautiful moment!</p>
+        <div class="couple-container">
+            <div class="person">
+                <img src="assets/groom.png" alt="Ganesh">
+                <h3>Ganesh N.</h3>
+                <p>s/o Smt. Manjula R. and Sri Nagaraj V.</p>
+            </div>
+            <div class="person">
+                <img src="assets/bride.png" alt="Ghanashree">
+                <h3>Ghanashree B.</h3>
+                <p>d/o Smt. Suma G. and Sri Bhakthavatsala C.M.</p>
+            </div>
+        </div>
+        <div class="container">
+            <button id="startSpeech"><i class="fas fa-microphone"></i> Our Story</button>
+            <p id="userText"><span></span></p>
+            <p id="aiResponse"> <span></span></p>
+        </div>
+    </section>
+
+    <!-- Countdown Timer -->
+    <section class="countdown">
+        <h2>We’re Getting Married!</h2>
+        <p>Join us as we celebrate love, laughter, and the beginning of our forever.</p>
+        <h3>23 February 2025</h3>
+        <div class="timer">
+            <div class="time-box"><span>21</span> <p>D</p></div>
+            <div class="time-box"><span>06</span> <p>H</p></div>
+            <div class="time-box"><span>50</span> <p>M</p></div>
+            <div class="time-box"><span>28</span> <p>S</p></div>
+        </div>
+    </section>
+
+    <!-- Event Details -->
+    <section class="events">
+        <div class="event-box">
+            <h3>Reception</h3>
+            <p>22 FEBRUARY 2025 <br> 6:30PM Onwards</p>
+            <p>Bandimane Kalyana Mantapa <br> Gubbi road, Tumkur - 572107</p>
+            <button class="map-btn">📍 Open Map</button>
+        </div>
+        <div class="event-box wedding">
+            <h3>Wedding</h3>
+            <p>23 FEBRUARY 2025 <br> 10:50AM - 11:30AM</p>
+            <p>Bandimane Kalyana Mantapa <br> Gubbi road, Tumkur - 572107</p>
+            <button class="map-btn">📍 Open Map</button>
+        </div>
+    </section>
+    <div class="mapouter"><div class="gmap_canvas"><iframe class="gmap_iframe" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=Bandimane Kalyana Mantapa, Gubbi Road, Tumkur - 572107&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe><a href="https://sprunkin.com/">Sprunki Game</a></div><style>.mapouter{position:relative;text-align:right;width:100%;height:400px;}.gmap_canvas {overflow:hidden;background:none!important;width:100%;height:400px;}.gmap_iframe {height:400px!important;}</style></div>
+    <!-- Photo Gallery -->
+    <section class="gallery">
+         <img src="assets/pic2.png" alt="Wedding Image">
+        <img src="assets/pic3.png" alt="Wedding Image">
+        <!-- <img src="gallery3.jpg" alt="Wedding Image">
+        <img src="gallery4.jpg" alt="Wedding Image">
+        <img src="gallery5.jpg" alt="Wedding Image">
+        <img src="gallery6.jpg" alt="Wedding Image"> -->
+    </section>
     <script src="script.js"></script>
 </body>
 </html>

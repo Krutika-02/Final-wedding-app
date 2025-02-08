@@ -60,3 +60,34 @@ function getVoiceFromBackend(text) {
         })
         .catch(error => console.error("Error generating speech:", error));
 }
+
+function updateCountdown() {
+    const weddingDate = new Date("February 23, 2025 00:00:00").getTime();
+    const now = new Date().getTime();
+    const timeLeft = weddingDate - now;
+
+    if (timeLeft < 0) {
+        document.querySelector(".countdown .timer").innerHTML = "<h3>We are Married! 🎉</h3>";
+        return;
+    }
+
+    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+    document.querySelector(".time-box:nth-child(1) span").innerText = days;
+    document.querySelector(".time-box:nth-child(2) span").innerText = hours;
+    document.querySelector(".time-box:nth-child(3) span").innerText = minutes;
+    document.querySelector(".time-box:nth-child(4) span").innerText = seconds;
+}
+
+// Run the countdown function every second
+setInterval(updateCountdown, 1000);
+
+// Open Google Maps on Click (Exact Location)
+document.querySelectorAll(".map-btn").forEach(button => {
+    button.addEventListener("click", function () {
+        window.open("https://www.google.com/maps/place/Bandimane+Kalyana+Mantapa/@13.3165182,77.0418957,15z/data=!4m6!3m5!1s0x3bb02e8b3befd963:0x59e04ef63c5c42d0!8m2!3d13.3165182!4d77.0418957!16s%2Fg%2F11c5k23z1m", "_blank");
+    });
+});
