@@ -9,18 +9,7 @@ app.use(express.json());
 app.use(cors());
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const ELEVEN_LABS_API_KEY = process.env.ELEVEN_LABS_API_KEY;
-const ELEVEN_LABS_VOICE_ID = "JBFqnCBsd6RMkjVDRZzb"; // Keep this public
 
-// ✅ Serve static files (Frontend)
-app.use(express.static(path.join(__dirname, "public")));
-
-// ✅ Serve index.html for all non-API routes
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
-// Define the Knowledge Base
 const KNOWLEDGE_BASE = `
 You are a wedding assistant, and you must only respond based on the wedding details provided below.
 Do not generate general wedding advice. Answer only from the information given.
@@ -52,7 +41,15 @@ Do not generate general wedding advice. Answer only from the information given.
 You must only answer questions related to this information.
 `;
 
-// OpenAI API Endpoint with Knowledge Base
+// ✅ Serve static files (Frontend)
+app.use(express.static(path.join(__dirname, "public")));
+
+// ✅ Serve index.html for all non-API routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// ✅ Chat API with OpenAI
 app.post("/chat", async (req, res) => {
     try {
         const { userText } = req.body;
@@ -60,9 +57,9 @@ app.post("/chat", async (req, res) => {
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
-                model: "gpt-4o-mini",
+                model: "gpt-4o",
                 messages: [
-                    { role: "system", content: KNOWLEDGE_BASE }, // Ensure model understands context
+                    { role: "system", content: KNOWLEDGE_BASE }, // Context
                     { role: "user", content: userText }
                 ],
             },
@@ -73,34 +70,45 @@ app.post("/chat", async (req, res) => {
 
         res.json({ aiResponse: response.data.choices[0].message.content });
     } catch (error) {
-        console.error(error);
+        console.error("OpenAI Chat Error:", error.response?.data || error.message);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
-// ElevenLabs API Endpoint for Voice Generation
+// ✅ Voice API with OpenAI (Human-like Speech)
 app.post("/voice", async (req, res) => {
     try {
         const { text } = req.body;
 
+        if (!text) {
+            return res.status(400).json({ error: "Text is required" });
+        }
+
         const response = await axios.post(
-            `https://api.elevenlabs.io/v1/text-to-speech/${ELEVEN_LABS_VOICE_ID}`,
+            "https://api.openai.com/v1/audio/speech",
             {
-                text: text,
-                model_id: "eleven_multilingual_v2",
-                voice_settings: { stability: 0.5, similarity_boost: 0.7 },
+                model: "tts-1", // OpenAI TTS Model
+                input: text,
+                voice: "alloy" // Options: alloy, echo, onyx, fable, nova, shimmer
             },
             {
-                headers: { "xi-api-key": ELEVEN_LABS_API_KEY },
-                responseType: "stream",
+                headers: {
+                    Authorization: `Bearer ${OPENAI_API_KEY}`,
+                    "Content-Type": "application/json"
+                },
+                responseType: "stream" // Stream audio back
             }
         );
 
+        // Send the audio stream to the client
+        res.setHeader("Content-Type", "audio/mpeg");
         response.data.pipe(res);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Internal Server Error" });
+        console.error("OpenAI TTS Error:", error.response?.data || error.message);
+        res.status(500).json({ error: "Failed to generate speech" });
     }
 });
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+// ✅ Start Server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
