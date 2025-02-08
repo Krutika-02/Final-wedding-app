@@ -7,7 +7,7 @@ document.getElementById("startSpeech").addEventListener("click", function () {
         let userText = event.results[0][0].transcript;
         document.querySelector("#userText span").innerText = userText;
 
-        fetch("http://localhost:5000/chat", { // Update with your backend URL when deployed
+        fetch("https://final-wedding-app.onrender.com/chat", { 
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userText }),
@@ -23,7 +23,7 @@ document.getElementById("startSpeech").addEventListener("click", function () {
 });
 
 function getVoiceFromBackend(text) {
-    fetch("http://localhost:5000/voice", {
+    fetch("https://final-wedding-app.onrender.com/voice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),
