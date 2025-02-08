@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
+const path = require("path");
 
 const app = express();
 app.use(express.json());
@@ -10,6 +11,14 @@ app.use(cors());
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const ELEVEN_LABS_API_KEY = process.env.ELEVEN_LABS_API_KEY;
 const ELEVEN_LABS_VOICE_ID = "JBFqnCBsd6RMkjVDRZzb"; // Keep this public
+
+// ✅ Serve static files (Frontend)
+app.use(express.static(path.join(__dirname, "public")));
+
+// ✅ Serve index.html for all non-API routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
 // Define the Knowledge Base
 const KNOWLEDGE_BASE = `
