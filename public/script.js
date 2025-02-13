@@ -6,13 +6,20 @@ window.onload = async function () {
             await audio.play();
             audio.volume = 0.5; // No need to use `await` for volume
         } catch (error) {
-            console.error("Audio playback failed:", error);
+            console.log("Audio playback failed, please give the sound permission");
         }
     }
 };
 
 document.getElementById("startSpeech").addEventListener("click", function () {
-    document.getElementById("myAudio").pause();
+    const audio = document.getElementById("myAudio");
+    if (audio) {
+        try {
+            audio.pause();
+        } catch (error) {
+            console.log("Audio playback failed, please give the sound permission");
+        }
+    }
     document.querySelector("#ask").disabled = true;
     document.querySelector("#userInputText").innerText = "";
     document.querySelector("#aiResponse").innerText = "";
@@ -36,8 +43,15 @@ document.getElementById("startSpeech").addEventListener("click", function () {
         .catch(error => console.error("Error fetching AI response:", error));
 });
 
-document.getElementById("ask").addEventListener("click", function () {
-    document.getElementById("myAudio").pause();
+document.getElementById("ask").addEventListener("click", async function () {
+    const audio = document.getElementById("myAudio");
+    if (audio) {
+        try {
+            await audio.pause();
+        } catch (error) {
+            console.log("Audio playback failed, please give the sound permission");
+        }
+    }
     const videoElement = document.querySelector(".songvideo");
     if (videoElement) {
         videoElement.muted = true;
@@ -179,14 +193,21 @@ function openPopup() {
     document.getElementById("overlay").style.display = "block";
 }
 
-function closePopup() {
+async function closePopup() {
     document.getElementById("popup").style.display = "none";
     document.getElementById("overlay").style.display = "none";
     if (currentAudio && !currentAudio.paused) {
         currentAudio.pause();
         currentAudio.currentTime = 0; // Reset to the beginning
     }
-    document.getElementById("myAudio").play(); 
+    const audio = document.getElementById("myAudio");
+    if (audio) {
+        try {
+            await audio.play();
+        } catch (error) {
+            console.log("Audio playback failed, please give the sound permission");
+        }
+    } 
 }
 
 document.addEventListener("DOMContentLoaded", function () {
