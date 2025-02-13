@@ -1,4 +1,55 @@
+let currentAudio = null;
+window.onload = async function () {
+    const audio = document.getElementById("myAudio");
+    if (audio) {
+        try {
+            await audio.play();
+            audio.volume = 0.5; // No need to use `await` for volume
+        } catch (error) {
+            console.error("Audio playback failed:", error);
+        }
+    }
+};
+
 document.getElementById("startSpeech").addEventListener("click", function () {
+    document.getElementById("myAudio").pause();
+    document.querySelector("#ask").disabled = true;
+    document.querySelector("#userInputText").innerText = "";
+    document.querySelector("#aiResponse").innerText = "";
+    document.querySelector("#status").innerText = "Loading...";
+    const videoElement = document.querySelector(".songvideo");
+    if (videoElement) {
+        videoElement.muted = true;
+    }
+    fetch("https://final-wedding-app.onrender.com/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ "userText":"Hi, love story in one line and warm invite me for wedding in one line and what else you can help me today" }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            let aiResponse = data.aiResponse;
+            console.log(aiResponse);
+            getVoiceFromBackend(aiResponse);
+            document.querySelector("#ask").disabled = false;
+        })
+        .catch(error => console.error("Error fetching AI response:", error));
+});
+
+document.getElementById("ask").addEventListener("click", function () {
+    document.getElementById("myAudio").pause();
+    const videoElement = document.querySelector(".songvideo");
+    if (videoElement) {
+        videoElement.muted = true;
+    }
+    document.querySelector("#ask").disabled = true;
+    document.querySelector("#userInputText").innerText = "";
+    document.querySelector("#aiResponse").innerText = "";
+    document.querySelector("#status").innerText = "Listening...";
+    if (currentAudio && !currentAudio.paused) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0; // Reset to the beginning
+    }
     let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.lang = "en-US";
     recognition.start();
@@ -9,7 +60,10 @@ document.getElementById("startSpeech").addEventListener("click", function () {
 
     recognition.onresult = function (event) {
         let userText = event.results[0][0].transcript;
-        document.querySelector("#userText span").innerText = userText;
+        console.log("User said:", userText);
+        document.querySelector("#ask").disabled = true;
+        document.querySelector("#userInputText").innerText = userText;
+        document.querySelector("#status").innerText = "Loading...";
         
         // Stop recognition after capturing input
         recognition.stop();
@@ -22,8 +76,9 @@ document.getElementById("startSpeech").addEventListener("click", function () {
             .then(response => response.json())
             .then(data => {
                 let aiResponse = data.aiResponse;
-                document.querySelector("#aiResponse span").innerText = aiResponse;
+                console.log(aiResponse);
                 getVoiceFromBackend(aiResponse);
+                document.querySelector("#ask").disabled = false;
             })
             .catch(error => console.error("Error fetching AI response:", error));
     };
@@ -48,10 +103,20 @@ function getVoiceFromBackend(text) {
         .then(blob => {
             let audioUrl = URL.createObjectURL(blob);
             let audio = new Audio(audioUrl);
-
             audio.onloadeddata = function () {
+                // Stop previously playing audio
+                if (currentAudio && !currentAudio.paused) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0; // Reset to the beginning
+                }
+
+                document.querySelector("#status").innerText = "";
+                document.querySelector("#aiResponse").innerText = text;
                 console.log("Audio loaded. Playing now...");
+
+                currentAudio = audio; // Update current playing audio
                 audio.play();
+                document.querySelector("#ask").disabled = false;
             };
 
             audio.onerror = function () {
@@ -62,28 +127,44 @@ function getVoiceFromBackend(text) {
 }
 
 function updateCountdown() {
-    const weddingDate = new Date("February 23, 2025 00:00:00").getTime();
-    const now = new Date().getTime();
-    const timeLeft = weddingDate - now;
+    const weddingDate = new Date("February 23, 2025 10:50:00 GMT+0530").getTime();
+    const marriedMessage = document.querySelector(".countdown .wearemarried");
+    let videoAdded = false; // Ensure video is added only once
 
-    if (timeLeft < 0) {
-        document.querySelector(".countdown .timer").innerHTML = "<h3>We are Married! 🎉</h3>";
-        return;
+    function updateTime() {
+        const now = new Date().getTime();
+        let timeLeft = weddingDate - now;
+        let isMarried = timeLeft < 0;
+        timeLeft = Math.abs(timeLeft); // Convert to positive for elapsed time
+
+        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        document.querySelector(".time-box:nth-child(1) span").innerText = (isMarried ? "+" : "") + days;
+        document.querySelector(".time-box:nth-child(2) span").innerText = hours;
+        document.querySelector(".time-box:nth-child(3) span").innerText = minutes;
+        document.querySelector(".time-box:nth-child(4) span").innerText = seconds;
+
+        if (isMarried && !videoAdded) {
+            marriedMessage.innerHTML = `
+                <h3>We are Married! 🎉</h3>
+                <div class="container" style="display: flex; justify-content: center; align-items: center; padding-top: 10px;">
+                    <video class="songvideo" src="assets/Ganesh + Ghanashree Song Compressed.mp4" width="100%" height="auto" autoplay controls loop muted style="display: block; border-radius: 10px;"></video>
+                </div>
+            `;
+            videoAdded = true;
+        }
     }
 
-    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-    document.querySelector(".time-box:nth-child(1) span").innerText = days;
-    document.querySelector(".time-box:nth-child(2) span").innerText = hours;
-    document.querySelector(".time-box:nth-child(3) span").innerText = minutes;
-    document.querySelector(".time-box:nth-child(4) span").innerText = seconds;
+    updateTime(); // Initial call
+    setInterval(updateTime, 1000);
 }
 
-// Run the countdown function every second
-setInterval(updateCountdown, 1000);
+updateCountdown();
+
+
 
 // Open Google Maps on Click (Exact Location)
 document.querySelectorAll(".map-btn").forEach(button => {
@@ -91,3 +172,27 @@ document.querySelectorAll(".map-btn").forEach(button => {
         window.open("https://www.google.com/maps/place/Bandimane+Kalyana+Mantapa/@13.3165182,77.0418957,15z/data=!4m6!3m5!1s0x3bb02e8b3befd963:0x59e04ef63c5c42d0!8m2!3d13.3165182!4d77.0418957!16s%2Fg%2F11c5k23z1m", "_blank");
     });
 });
+
+
+function openPopup() {
+    document.getElementById("popup").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+}
+
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
+    if (currentAudio && !currentAudio.paused) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0; // Reset to the beginning
+    }
+    document.getElementById("myAudio").play(); 
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const videoElement = document.querySelector(".songvideo");
+    if (videoElement) {
+        video.volume = 0.5;
+        videoElement.muted = true;
+    }
+  });
