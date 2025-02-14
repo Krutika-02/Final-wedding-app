@@ -21,7 +21,7 @@ document.getElementById("startSpeech").addEventListener("click", function () {
         }
     }
     document.querySelector("#ask").disabled = true;
-    document.querySelector("#userInputText").innerText = "";
+    document.querySelector("#userInputText").innerText = "Hi";
     document.querySelector("#aiResponse").innerText = "";
     document.querySelector("#status").innerText = "Loading...";
     const videoElement = document.querySelector(".songvideo");
