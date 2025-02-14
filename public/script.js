@@ -21,9 +21,10 @@ document.getElementById("startSpeech").addEventListener("click", function () {
         }
     }
     document.querySelector("#ask").disabled = true;
-    document.querySelector("#userInputText").innerText = "Hi";
+    document.querySelector("#userInputText").innerText = "Hi :)";
     document.querySelector("#aiResponse").innerText = "";
     document.querySelector("#status").innerText = "Loading...";
+    document.querySelector("#status").style.color = "#e41717";
     const videoElement = document.querySelector(".songvideo");
     if (videoElement) {
         videoElement.muted = true;
@@ -38,7 +39,6 @@ document.getElementById("startSpeech").addEventListener("click", function () {
             let aiResponse = data.aiResponse;
             console.log(aiResponse);
             getVoiceFromBackend(aiResponse);
-            document.querySelector("#ask").disabled = false;
         })
         .catch(error => console.error("Error fetching AI response:", error));
 });
@@ -60,6 +60,8 @@ document.getElementById("ask").addEventListener("click", async function () {
     document.querySelector("#userInputText").innerText = "";
     document.querySelector("#aiResponse").innerText = "";
     document.querySelector("#status").innerText = "Listening...";
+    document.querySelector("#status").style.color = "#1a71e6";
+
     if (currentAudio && !currentAudio.paused) {
         currentAudio.pause();
         currentAudio.currentTime = 0; // Reset to the beginning
@@ -78,6 +80,7 @@ document.getElementById("ask").addEventListener("click", async function () {
         document.querySelector("#ask").disabled = true;
         document.querySelector("#userInputText").innerText = userText;
         document.querySelector("#status").innerText = "Loading...";
+        document.querySelector("#status").style.color = "#e41717";
         
         // Stop recognition after capturing input
         recognition.stop();
